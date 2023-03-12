@@ -1,0 +1,52 @@
+--- bonk-0.6/bonk.cc.orig	2002-06-23 05:58:57.000000000 +0200
++++ bonk-0.6/bonk.cc	2023-03-12 07:40:12.512837219 +0100
+@@ -37,6 +37,7 @@ const char *version = "0.6";
+ #include <vector>
+ #include <string>
+ #include <algorithm>
++#include <cstring>
+ 
+ using namespace std;
+ 
+@@ -559,7 +560,7 @@ FILE *open_dsp(int rate,bool stereo) {
+   return fdopen(device,"wb"); 
+ }
+ 
+-bool has_parameter(int &argc,char **&argv,char *name,char *&value) {
++bool has_parameter(int &argc,char **&argv,const char *name,char *&value) {
+   for(int i=1;i<argc-1;i++) {
+     if (strcasecmp(argv[i],name) == 0) {
+       value = argv[i+1];
+@@ -573,7 +574,7 @@ bool has_parameter(int &argc,char **&arg
+   return false;
+ }
+ 
+-bool has_flag(int &argc,char **&argv,char *name) {
++bool has_flag(int &argc,char **&argv,const char *name) {
+   for(int i=1;i<argc;i++) {
+     if (strcasecmp(argv[i],name) == 0) {
+       for(int j=i;j<argc-1;j++)
+--- bonk-0.6/utility.h.orig	2002-06-23 05:59:12.000000000 +0200
++++ bonk-0.6/utility.h	2023-03-12 07:39:20.093121201 +0100
+@@ -54,8 +54,8 @@ uint16 read_uint16(FILE *f) {
+ // Throwable error structure:
+ 
+ struct error { 
+-  char *message; 
+-  error(char *_message) : message(_message) { } 
++  const char *message; 
++  error(const char *_message) : message(_message) { } 
+ };
+ 
+ // Number of bits required to store a value:
+--- bonk-0.6/wav.h.orig	2002-06-23 05:54:33.000000000 +0200
++++ bonk-0.6/wav.h	2023-03-12 07:39:58.349580615 +0100
+@@ -4,7 +4,7 @@
+ #include <stdio.h>
+ #include "utility.h"
+ 
+-bool read_pattern(FILE *file,char *pattern) {
++bool read_pattern(FILE *file,const char *pattern) {
+   while(*pattern) {
+     if (fgetc(file) != *pattern)
+       return false;
